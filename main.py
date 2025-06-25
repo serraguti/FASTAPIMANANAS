@@ -4,8 +4,22 @@ from fastapi import FastAPI
 from typing import Union
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
+import json
+from models.player import Player
+import services.ServiceJugadores as service
 #Creamos una variable para la aplicación
 app = FastAPI()
+
+@app.get("/players")
+def readPlayers():
+    players = service.getPlayers()
+    return {"players": players}
+
+@app.get("/findplayer/{idplayer}")
+def findPlayer(idplayer: int):
+    player = service.findPlayer(idplayer)
+    return {"player": player}
+
 
 #CREAMOS UNA CLASE PARA SER RECIBIDA EN PUT/POST
 class Dato(BaseModel):
