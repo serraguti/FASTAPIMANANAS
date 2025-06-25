@@ -2,8 +2,20 @@
 #Traemos el método FastApi que nos permite crear nuestra Aplicación
 from fastapi import FastAPI
 from typing import Union
+from fastapi.encoders import jsonable_encoder
+from pydantic import BaseModel
 #Creamos una variable para la aplicación
 app = FastAPI()
+
+#CREAMOS UNA CLASE PARA SER RECIBIDA EN PUT/POST
+class Dato(BaseModel):
+    nombre: str
+    cantidad: int
+
+@app.put("/put")
+def updateDato(dato: Dato):
+    return {"Nombre recibido": dato.nombre
+            , "cantidad": dato.cantidad}
 
 #Para que un método sea de un Api debemos decorarlo con GET, POST, etc
 #En la decoración se indica el EndPoint de acceso
@@ -18,15 +30,30 @@ def metodoSaludo():
     return {"mensaje": "Bienvenido a mi FastApi"}
 
 @app.get("/doble/{numero}")
-def getDoble(numero: int):
+def getDoble(numero: int, mensaje: str):
     #INTERNAMENTE NO ES NECESARIO EL TIPADO
     doble: int = numero * 2
-    return {"doble": doble}
+    return {"doble": doble,
+            "mensaje": mensaje}
 
 @app.get("/saludito")
 def dameSaludito(nombre: str, aficion: Union[str, None]=None):
     return {"saludo": "Hola holita " + nombre
             , "aficion": aficion}
+
+@app.get("/numeros")
+def dameNumeros():
+    listaNumeros = [33,44,55,22,11]
+    #Necesitamos convertir cada número a Diccionario: {key:value}
+    #salida = [{'numero': 33}]
+    #{"\"numero\"": 33}
+    salida = []
+    for num in listaNumeros:
+        #Creamos un diccionario para cada numero
+        elemento = {"numero": num}
+        item = jsonable_encoder(elemento)
+        salida.append(item)
+    return {"numeros": salida}
 
 
 
