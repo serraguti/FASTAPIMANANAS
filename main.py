@@ -7,18 +7,20 @@ from pydantic import BaseModel
 import json
 from models.player import Player
 import services.ServiceJugadores as service
+from controllers.datoscontroller import router as datoscontroller
+from controllers.jugadorescontroller import router as jugadorescontroller
 #Creamos una variable para la aplicación
 app = FastAPI()
 
-@app.get("/players")
-def readPlayers():
-    players = service.getPlayers()
-    return {"players": players}
+#Tenemos dos opciones en el momento de integrar el controller
+#1) Integrar TODO el nuevo controller en la funcionalidad principal
+#app.include_router(datoscontroller)
+#2) Separar el controller indicando un prefijo para acceder a sus métodos
+#y un nombre de controller para la documentación
+app.include_router(datoscontroller, prefix="/api", tags=["Datos"])
+app.include_router(jugadorescontroller, prefix="/api", tags=["Jugadores"])
 
-@app.get("/findplayer/{idplayer}")
-def findPlayer(idplayer: int):
-    player = service.findPlayer(idplayer)
-    return {"player": player}
+
 
 
 #CREAMOS UNA CLASE PARA SER RECIBIDA EN PUT/POST
