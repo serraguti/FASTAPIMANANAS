@@ -1,6 +1,7 @@
 #DEBEMOS TRAERNOS NUESTRAS LIBRERIAS DE FASTAPI
 #Traemos el método FastApi que nos permite crear nuestra Aplicación
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from dependencies.DependencyMethods import dependenciaGlobal1, dependenciaGlobal2
 from typing import Union
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -10,7 +11,8 @@ import services.ServiceJugadores as service
 from controllers.datoscontroller import router as datoscontroller
 from controllers.jugadorescontroller import router as jugadorescontroller
 #Creamos una variable para la aplicación
-app = FastAPI()
+app = FastAPI(dependencies=[Depends(dependenciaGlobal1)
+                            , Depends(dependenciaGlobal2)])
 
 #Tenemos dos opciones en el momento de integrar el controller
 #1) Integrar TODO el nuevo controller en la funcionalidad principal

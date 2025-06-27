@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from dependencies.DependencyMethods import parametersInicioFin
 import services.ServiceJugadores as service
 from utils.response_wrapper import api_response
 
@@ -18,11 +19,16 @@ def findPlayer(idplayer: int):
         return api_response(data=player)
     
 @router.get("/filteredad/{edad}")
-def playersAge(edad: int):
-    players = service.searchPlayersAge(edad)
+def playersAge(edad: int, commons: dict = Depends(parametersInicioFin)):
+    players = service.searchPlayersAge(edad, commons["inicio"], commons["fin"])
     return api_response(data=players)
 
 @router.get("/filterposicion/{posicion}")
-def playersPosition(posicion: str):
-    players = service.searchPlayersPosition(posicion)
+def playersPosition(posicion: str,  commons: dict = Depends(parametersInicioFin)):
+    players = service.searchPlayersPosition(posicion, commons["inicio"], commons["fin"])
+    return api_response(data=players)
+
+@router.get("/filterplayers")
+def playersFilter( commons: dict = Depends(parametersInicioFin)):
+    players = service.filtrarJugadores(commons["inicio"], commons["fin"])
     return api_response(data=players)
